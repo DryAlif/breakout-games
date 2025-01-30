@@ -50,6 +50,8 @@ for (let i = 0; i < brickRowCount; i++) {
   }
 }
 
+console.log(bricks);
+
 //Draw ball on canvas
 function drawBall() {
   ctx.beginPath();
@@ -86,15 +88,65 @@ function drawBricks() {
   });
 }
 
+//move paddle canvas
+function movePaddle() {
+  paddle.x += paddle.dx;
+
+  // wall detection
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  }
+  if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+}
+
 //Draw Everything
 function draw() {
+  //clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   drawBall();
   drawPaddle();
   drawScore();
   drawBricks();
 }
 
-draw();
+// Update canvas drawing
+function update() {
+  movePaddle();
+
+  // Draw everything
+  draw();
+  requestAnimationFrame(update);
+}
+
+update();
+
+// KeyDown event
+function KeyDown(e) {
+  if (e.key === 'Right' || e.key === 'ArrowRight') {
+    paddle.dx = paddle.speed;
+  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+    paddle.dx = -paddle.speed;
+  }
+}
+
+// KeyUp event
+function KeyUp(e) {
+  if (
+    e.key === 'Right' ||
+    e.key === 'ArrowRight' ||
+    e.key === 'left' ||
+    e.key === 'ArrowLeft'
+  ) {
+    paddle.dx = 0;
+  }
+}
+
+// Keyboard Event Handlers
+document.addEventListener('keydown', KeyDown);
+document.addEventListener('keyup', KeyUp);
 
 // Rules and close vent handlers
 rulesBtn.addEventListener('click', () => rules.classList.add('show'));
